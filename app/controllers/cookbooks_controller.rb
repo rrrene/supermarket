@@ -1,5 +1,6 @@
 class CookbooksController < ApplicationController
   before_filter :assign_categories
+  before_filter :authenticate_user!, only: :follow
 
   #
   # GET /cookbooks(/categories/:category)
@@ -62,6 +63,18 @@ class CookbooksController < ApplicationController
   # GET /cookbooks/:cookbook
   #
   def show
+    @cookbook = Cookbook.with_name(params[:id]).first!
+  end
+
+  #
+  # POST /cookbooks/:cookbook/follow
+  #
+  # Makes the current user a follower of the specified cookbook.
+  #
+  def follow
+    cookbook = Cookbook.with_name(params[:id]).first!
+    cookbook.cookbook_followers.create(user: current_user)
+    head 200
   end
 
   private
